@@ -1,0 +1,6 @@
+.idea/
+
+day*/input
+day*/example*
+
+*/__pycache__
