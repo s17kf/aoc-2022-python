@@ -56,6 +56,13 @@ class Dir:
                 result += child.get_all_directories_not_bigger(limit)
         return result
 
+    def get_all_directiories_sizes(self):
+        result = [self.get_size()]
+        for child in self.content:
+            if isinstance(child, Dir):
+                result += child.get_all_directiories_sizes()
+        return result
+
 
 class File:
     def __init__(self, name, size, level):
@@ -104,11 +111,15 @@ for line in input_lines:
         else:
             current_dir.content.append(File(name, int(size), current_dir.level + 1))
 
-
-# print(root_dir)
-
 result1 = sum([d[1] for d in root_dir.get_all_directories_not_bigger(100000)])
-result2 = 1
+
+space_needed = 30000000 - (70000000 - root_dir.get_size())
+all_directories_sizes = sorted(root_dir.get_all_directiories_sizes())
+
+for size in all_directories_sizes:
+    if size >= space_needed:
+        result2 = size
+        break
 
 print(f"task1: {result1}")
 print(f"task2: {result2}")
