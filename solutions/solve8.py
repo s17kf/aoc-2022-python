@@ -2,25 +2,6 @@
 """exec" "pyenv" "exec" "python" "$0" "$@"""
 
 import common
-from enum import Enum, auto
-from collections import Counter
-import numpy
-from common import numpy_matrix
-
-HELP_INFO = [
-    "Script is solving task 8 of advent of code 2021",
-    "Arguments:",
-    common.TAB + "input file"
-]
-arguments_keywords = ["inputFile"]
-
-script_arguments = common.parse_arguments(arguments_keywords, HELP_INFO)
-if script_arguments is None:
-    exit(1)
-
-input_file_name = script_arguments["inputFile"]
-print("solving file: " + input_file_name)
-input_lines = common.read_lines_from_file(input_file_name)
 
 
 def get_column(matrix, i):
@@ -42,6 +23,10 @@ def count_visible(tree, other_trees):
             break
     return i
 
+
+input_lines = common.init_day(8)
+if input_lines is None:
+    exit(1)
 
 visible_trees = []
 visibility = []

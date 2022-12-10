@@ -3,20 +3,9 @@
 
 import common
 
-HELP_INFO = [
-    "Script is solving task 9 of advent of code 2021",
-    "Arguments:",
-    common.TAB + "input file"
-]
-arguments_keywords = ["inputFile"]
-
-script_arguments = common.parse_arguments(arguments_keywords, HELP_INFO)
-if script_arguments is None:
+input_lines = common.init_day(9)
+if input_lines is None:
     exit(1)
-
-input_file_name = script_arguments["inputFile"]
-print("solving file: " + input_file_name)
-input_lines = common.read_lines_from_file(input_file_name)
 
 knots = [[0, 0] for i in range(10)]
 k1, k9 = {(0, 0)}, {(0, 0)}

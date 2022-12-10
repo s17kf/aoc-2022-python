@@ -14,10 +14,10 @@ def main():
     if input_lines is None:
         exit(1)
 
-    x = 1
     interesting_cycles = [20, 60, 100, 140, 180, 220]
     image = [['.' for _ in range(40)] for _ in range(6)]
     signals = []
+    x = 1
     cycle = 0
     for line in input_lines:
         cycle += 1
