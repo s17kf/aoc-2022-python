@@ -6,22 +6,25 @@ if [[ $# -ne 1 ]]; then
 fi
 
 day=$1
-solutionFile="solve${day}.py"
-dayDirectory="day${day}"
+solutionsDir="solutions"
+solutionFile="${solutionsDir}/solve${day}.py"
+dayInputDirectory="input_puzzles/day${day}"
 
-mkdir "${dayDirectory}"
-if [[ $? -ne 0 ]]; then
-  echo "exiting"
+if [[ -f "${solutionFile}" ]]; then
+  echo "solution file already exists, exiting ..."
   exit
 fi
 
-cd "${dayDirectory}"
-ln -s ../common .
+mkdir "${dayInputDirectory}"
+if [[ $? -ne 0 ]]; then
+  echo "failed to create input directory, exiting ..."
+  exit
+fi
 
-cp ../solveTemplate.py "${solutionFile}"
 
+cp ${solutionsDir}/solveTemplate.py "${solutionFile}"
 sed -i "s/DAY_NUM/${day}/g" "${solutionFile}"
 
-touch exampleData.txt
+touch "${dayInputDirectory}/exampleData.txt"
 
 echo "Day ${day} initialized."

@@ -29,14 +29,14 @@ def parse_arguments(arguments_keywords, error_info):
 
 
 def init_day(day):
-    HELP_INFO = [
+    help_info = [
         f"Script is solving task {day} of advent of code 2022",
         "Arguments:",
         common.TAB + "input file"
     ]
     arguments_keywords = ["inputFile"]
 
-    script_arguments = parse_arguments(arguments_keywords, HELP_INFO)
+    script_arguments = parse_arguments(arguments_keywords, help_info)
     if script_arguments is None:
         return None
 

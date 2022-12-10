@@ -1,7 +1,6 @@
 .idea/
 
-day*/input
-day*/example*
+input_puzzles/
 
 */__pycache__
 
