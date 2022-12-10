@@ -26,3 +26,20 @@ def parse_arguments(arguments_keywords, error_info):
         return None
     print(len(script_arguments))
     return script_arguments
+
+
+def init_day(day):
+    HELP_INFO = [
+        f"Script is solving task {day} of advent of code 2022",
+        "Arguments:",
+        common.TAB + "input file"
+    ]
+    arguments_keywords = ["inputFile"]
+
+    script_arguments = parse_arguments(arguments_keywords, HELP_INFO)
+    if script_arguments is None:
+        return None
+
+    input_file_name = script_arguments["inputFile"]
+    print("solving file: " + input_file_name)
+    return read_lines_from_file(input_file_name)
