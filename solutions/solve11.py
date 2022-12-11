@@ -15,12 +15,10 @@ class Monkey:
         self.next_on_false = int(next_on_false)
         self.inspected_items = 0
 
-    def do_round(self, reduce_operation, reduce_operator, all_monkeys):
+    def do_round(self, reduce_operation, reduce_operand, all_monkeys):
         self.inspected_items += len(self.items)
-        for i, item in enumerate(self.items):
-            self.items[i] = self.operation(item, self.multiplier)
-        self.items = [reduce_operation(item, reduce_operator) for item in self.items]
         for item in self.items:
+            item = reduce_operation(self.operation(item, self.multiplier), reduce_operand)
             next_monkey = self.next_on_true if item % self.divisor == 0 else self.next_on_false
             all_monkeys[next_monkey].add_item(item)
         self.items = []
