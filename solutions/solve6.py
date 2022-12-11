@@ -1,6 +1,4 @@
-#!/bin/bash
-"""exec" "pyenv" "exec" "python" "$0" "$@"""
-
+#!/usr/bin/env python3
 import common
 
 input_lines = common.init_day(6)

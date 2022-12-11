@@ -1,5 +1,4 @@
-#!/bin/bash
-"""exec" "pyenv" "exec" "python" "$0" "$@"""
+#!/usr/bin/env python3.10
 
 import common
 
