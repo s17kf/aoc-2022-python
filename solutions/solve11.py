@@ -1,107 +1,70 @@
 #!/bin/bash
 """exec" "pyenv" "exec" "python" "$0" "$@"""
-import math
 
 import common
-from enum import Enum, auto
-from collections import Counter
-import numpy
-from common import numpy_matrix
+from math import prod
 
 
 class Monkey:
-    def __init__(self, items, operator, multiplier, divisor, next_on_true, next_on_false,
-                 divide=True):
-        self.items = items
-        self.operation = lambda x, y: x * y if operator == "*" else x + y
-        self.multiply_by_old = multiplier == "old"
-        self.multiplier = " " if self.multiply_by_old else int(multiplier)
+    def __init__(self, items, operation, multiplier, divisor, next_on_true, next_on_false):
+        self.items = items.copy()
+        self.operation = operation
+        self.multiplier = " " if multiplier == "old" else int(multiplier)
         self.divisor = int(divisor)
         self.next_on_true = int(next_on_true)
         self.next_on_false = int(next_on_false)
         self.inspected_items = 0
-        self.divide = divide
 
-    def do_round(self):
+    def do_round(self, reduce_operation, reduce_operator, all_monkeys):
         self.inspected_items += len(self.items)
         for i, item in enumerate(self.items):
-            multiplier = item if self.multiply_by_old else self.multiplier
-            # self.items[i] *= item if self.multiply_by_old else self.multiplier
-            self.items[i] = self.operation(item, multiplier)
-        if self.divide:
-            self.items = [math.floor(item / 3) for item in self.items]
-        result = []
+            self.items[i] = self.operation(item, self.multiplier)
+        self.items = [reduce_operation(item, reduce_operator) for item in self.items]
         for item in self.items:
             next_monkey = self.next_on_true if item % self.divisor == 0 else self.next_on_false
-            result.append((item, next_monkey))
+            all_monkeys[next_monkey].add_item(item)
         self.items = []
-        return result
 
     def add_item(self, item):
         self.items.append(item)
-        # self.inspected_items += 1
 
     def get_inspected_items(self):
         return self.inspected_items
 
-    def __repr__(self):
-        return f"{self.items}, m({self.multiplier}), d({self.divisor}), " + \
-               f"t({self.next_on_true}) f({self.next_on_false})"
 
+def do_rounds(rounds, monkeys, reduce_operation, reduce_operand):
+    for round in range(rounds):
+        for monkey in monkeys:
+            monkey.do_round(reduce_operation, reduce_operand, monkeys)
+    return prod(sorted([monkey.get_inspected_items() for monkey in monkeys], reverse=True)[0:2])
 
-def do_round(monkeys):
-    for monkey in monkeys:
-        items = monkey.do_round()
-        for item in items:
-            item, next_monkey = item
-            monkeys[next_monkey].add_item(item)
 
 def main():
     input_lines = common.init_day(11)
     if input_lines is None:
         exit(1)
 
-    monkeys_data = common.get_list_of_groups_divided_empty_line(input_lines, ";")
+    reduce_value_part2 = 1
     monkeys = []
     monkeys2 = []
-    for i, monkey_data in enumerate(monkeys_data):
+    monkeys_data = common.get_list_of_groups_divided_empty_line(input_lines, ";")
+    for monkey_data in monkeys_data:
         monkey_data = monkey_data.split(";")
-        # print(monkey_data)
         items = [int(item.rstrip(",")) for item in monkey_data[1].split()[2:]]
         operator, multiplier = monkey_data[2].split()[-2:]
+        operation = (lambda x, y: x + y) if operator == '+' else (lambda x, y: x ** 2) \
+            if multiplier == "old" else (lambda x, y: x * y)
         divisor = monkey_data[3].split()[-1]
         next_on_true = monkey_data[4].split()[-1]
         next_on_false = monkey_data[5].split()[-1]
-        monkeys.append(Monkey(items, operator, multiplier, divisor, next_on_true, next_on_false))
+        monkeys.append(
+            Monkey(items, operation, multiplier, divisor, next_on_true, next_on_false))
         monkeys2.append(
-            Monkey(items, operator, multiplier, divisor, next_on_true, next_on_false, False))
+            Monkey(items, operation, multiplier, divisor, next_on_true, next_on_false))
+        reduce_value_part2 *= int(divisor)
 
-    for monkey in monkeys:
-        print(monkey)
-
-    for _ in range(20):
-        do_round(monkeys)
-
-    print()
-    for monkey in monkeys:
-        print(monkey.get_inspected_items(), monkey)
-
-    monkey_values = sorted([monkey.get_inspected_items() for monkey in monkeys], reverse=True)
-
-    result1 = monkey_values[0] * monkey_values[1]
-
-    for i in range(1):
-        if i % 100 == 0:
-            print(i)
-        do_round(monkeys2)
-
-    print()
-    for monkey in monkeys2:
-        print(monkey.get_inspected_items(), monkey)
-
-    monkey_values2 = sorted([monkey.get_inspected_items() for monkey in monkeys2], reverse=True)
-    print(monkey_values2)
-    result2 = monkey_values2[0] * monkey_values2[1]
+    result1 = do_rounds(20, monkeys, (lambda item, op: item // op), 3)
+    result2 = do_rounds(10000, monkeys2, (lambda item, op: item % op), reduce_value_part2)
 
     print(f"task1: {result1}")
     print(f"task2: {result2}")
