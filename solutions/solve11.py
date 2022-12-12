@@ -14,10 +14,10 @@ class Monkey:
         self.next_on_false = int(next_on_false)
         self.inspected_items = 0
 
-    def do_round(self, reduce_operation, reduce_operand, all_monkeys):
+    def do_round(self, reduce_operation, all_monkeys):
         self.inspected_items += len(self.items)
         for item in self.items:
-            item = reduce_operation(self.operation(item, self.multiplier), reduce_operand)
+            item = reduce_operation(self.operation(item, self.multiplier))
             next_monkey = self.next_on_true if item % self.divisor == 0 else self.next_on_false
             all_monkeys[next_monkey].add_item(item)
         self.items = []
@@ -29,10 +29,10 @@ class Monkey:
         return self.inspected_items
 
 
-def do_rounds(rounds, monkeys, reduce_operation, reduce_operand):
+def do_rounds(rounds, monkeys, reduce_operation):
     for round in range(rounds):
         for monkey in monkeys:
-            monkey.do_round(reduce_operation, reduce_operand, monkeys)
+            monkey.do_round(reduce_operation, monkeys)
     return prod(sorted([monkey.get_inspected_items() for monkey in monkeys], reverse=True)[0:2])
 
 
@@ -60,9 +60,8 @@ def main():
             Monkey(items, operation, multiplier, divisor, next_on_true, next_on_false))
         reduce_value_part2 *= int(divisor)
 
-    result1 = do_rounds(20, monkeys, (lambda item, op: item // op), 3)
-    result2 = do_rounds(10000, monkeys2, (lambda item, op: item % op), reduce_value_part2)
-
+    result1 = do_rounds(20, monkeys, (lambda item: item // 3))
+    result2 = do_rounds(10000, monkeys2, (lambda item: item % reduce_value_part2))
     print(f"task1: {result1}")
     print(f"task2: {result2}")
 
