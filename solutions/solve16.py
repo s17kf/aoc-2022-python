@@ -3,6 +3,7 @@
 import copy
 import time
 from typing import Dict
+from collections import defaultdict
 
 import common
 
@@ -59,9 +60,10 @@ def copy_all_valves(valves: Dict[str, Valve]):
 
 def get_released_pressure(openings):
     released_pressure = 0
-    for minute, rate in openings.items():
+    for minute, rates in openings.items():
         if minute < 31:
-            released_pressure += (31 - minute) * rate
+            for rate in rates:
+                released_pressure += (31 - minute) * rate
     return released_pressure
 
 
@@ -71,7 +73,7 @@ global_best_pressure = 0
 def find_highest_pressure(valves: Dict[str, Valve],
                           valve_to_distances: Dict[str, Dict[str, int]],
                           current_valve_name="AA",
-                          openings={},
+                          openings=defaultdict(lambda: []),
                           current_minute=1):
     current_valve = valves[current_valve_name]
     # distances = get_no_zero_rate_distances(current_valve, valves)
@@ -87,8 +89,8 @@ def find_highest_pressure(valves: Dict[str, Valve],
         new_valves = copy_all_valves(valves)
         valve = new_valves[valve_name]
         new_minute = current_minute + distance + 1
-        new_openings = copy.copy(openings)
-        new_openings[new_minute] = valve.rate
+        new_openings = copy.deepcopy(openings)
+        new_openings[new_minute].append(valve.rate)
         valve.rate = 0
         openings_variants.append(find_highest_pressure(new_valves,
                                                        valve_to_distances,
