@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import time
 from collections import defaultdict
 
 import numpy as np
@@ -155,4 +156,6 @@ def main():
     print(f"task2: {simulate(grove, size, 10000000000000)}")
 
 
+start_time = time.time()
 main()
+print("--- %s seconds ---" % (time.time() - start_time))
